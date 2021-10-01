@@ -1,0 +1,23 @@
+tbai_required:
+    project_id: QG_ket5
+    
+setup:
+    model_class: T5ForConditionalGeneration
+    tokenizer_class: T5Tokenizer
+    optimizer_class: AdamW
+    checkpoint:
+    model: KETI-AIR/ke-t5-base
+    tokenizer: KETI-AIR/ke-t5-base
+    data_dir: ./data/ #/home/choyh/0.RPAi/3.MRC/0.data/
+    device: cuda
+    distributed: True
+    
+hyperparameters:
+    learning_rate: 5e-5
+    epochs: 5
+    train_batch_size: 2
+    eval_batch_size: 1
+    gradient_accumulation_steps: 8
+    log_every: 10
+    fp16: False
+
