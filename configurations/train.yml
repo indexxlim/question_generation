@@ -11,6 +11,7 @@ setup:
     data_dir: ./data/ #/home/choyh/0.RPAi/3.MRC/0.data/
     device: cuda
     distributed: True
+    test: True
     
 hyperparameters:
     learning_rate: 5e-5

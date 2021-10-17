@@ -175,6 +175,8 @@ def single_epoch_validate(model, tokenizer, valid_loader, pad_id, args):
 
 
 def train(model, optimizer, tokenizer, train_loader, test_loader, args):
+    logger = args.logger
+
 
     # if args.distributed:
     #     # FOR DISTRIBUTED:  Set the device according to local_rank.
@@ -182,8 +184,7 @@ def train(model, optimizer, tokenizer, train_loader, test_loader, args):
 
     #     # FOR DISTRIBUTED:  Initialize the backend.  torch.distributed.launch will provide
     #     # environment variables, and requires that you use init_method=`env://`.
-    #     torch.distributed.init_process_group(backend='nccl',
-    #                                         init_method='env://')
+    
     #     model.cuda()
     #     model = DDP(model, delay_allreduce=True)
     # else:

@@ -59,16 +59,43 @@ class QGDataset(Dataset):
 class QGBatchGenerator:
     '''
         collate function
+        https://github.com/patil-suraj/question_generation
     '''
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer, highlight_format = True):
         self.tokenizer = tokenizer        
+        self.highlight_format = highlight_format
 
 
     def __call__(self, batch):
         source = []
         target = []
-        for i in range(len(batch)):
-            source.append(f"answer: {batch[i]['a']}  context: {batch[i]['c']}")
+        if self.highlight_format:
+            source_span_len = 1000
+
+            for i in range(len(batch)):
+                start_position = batch[i]['p']
+                end_position = batch[i]['p'] + len(batch[i]['a'])
+                if len(batch[i]['c']) > source_span_len:   #check source_span_len
+                    before_start = int(max(start_position-source_span_len/2,0))
+                    before_answer = batch[i]['c'][before_start:start_position]
+                    after_answer = batch[i]['c'][end_position:end_position+int(source_span_len/2)]
+                    
+                    if len(before_answer) < int(source_span_len/2):
+                        after_end = end_position + int(source_span_len/2 - len(before_answer))
+                        after_answer = batch[i]['c'][end_position:after_end]
+                    elif len(after_answer) < int(source_span_len/2):
+                        before_start = before_start - int(source_span_len/2 - len(after_answer))
+                        before_start = int(max(before_start,0))
+                        before_answer = batch[i]['c'][before_start:start_position]
+                    
+                    ith_source = before_answer + '<extra_id_0>' + batch[i]['c'][start_position:end_position] + '<extra_id_0>' + after_answer
+                else:
+                    ith_source = batch[i]['c'][:start_position] + '<extra_id_0>' + batch[i]['c'][start_position:end_position] + '<extra_id_0>' + batch[i]['c'][end_position:]
+                source.append(f"answer: question generation context: {ith_source}")
+
+        else:
+            for i in range(len(batch)):
+                source.append(f"answer: {batch[i]['a']}  context: {batch[i]['c']}")
         
         target = [item['q'] for item in batch]
         

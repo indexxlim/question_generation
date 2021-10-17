@@ -118,6 +118,11 @@ def get_args():
         default=train_config.setup.distributed
     )
     parser.add_argument(
+        "--test",
+        type=bool,
+        default=train_config.setup.test
+    )
+    parser.add_argument(
         "--learning_rate",
         type=float,
         default=train_config.hyperparameters.learning_rate
