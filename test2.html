@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+      <br> <br>
+      <div style="padding: 1rem 2rem 1rem;">
+        <div class="container">
+          <h1 class="display-3">
+            <a href="/">TwoBlock Ai Demo</a>
+	  </h1>
+        </div>
+      </div>
+
+      <div class="container">
+        <br>
+        <div class="row" style="font-size: 24px; font-weight: bold; margin-top: 30px; margin-bottom: 50px;">
+            문제 생성 (Question Generation)
+        </div>
+
+        <div class="row">
+          <div  class="col-md-h text-center" style="height: 50px; background-color: #36445e; border: #36445e solid 1px; color:#fff; padding-top: 10px;">
+             본문  
+          </div>
+        </div>
+        <div class="row">
+          <div style="width:100%; background-color: #fafafa; border: #ddd solid 1px; padding: 10px;">
+            <textarea id="myMessage_text_2" style="width: 100%;"> 정답을 입력하세요</textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div  class="col-md-h text-center" style="height: 50px; background-color: #36445e; border: #36445e solid 1px; color:#fff; padding-top: 10px;">
+            정답
+          </div>
+        </div>
+        <div class="row">
+          <div style="width:100%; background-color: #fafafa; border: #ddd solid 1px; padding: 10px;">
+            <textarea id="myMessage_text_2" style="width: 100%;"> 정답을 입력하세요</textarea>
+          </div>
+        </div>
+        
+        <div id="result-table" class="row text-center" style="white-space: pre-wrap; background-color: #fafafa; margin-top: 50px; padding: 10px; display: none">
+          <table style="width: 60%;">
+            <tbody>
+              <tr>
+                <td id="sim_score_butter" style="font-size: 24px; height: 50px;"></td>
+                <td style="width: 80%;">Sent2Vec (Sentence Embedding by Sent2Vec) </td>
+              </tr>
+              <tr>
+                <td id="sim_score_pororo_se" style="font-size: 24px; height: 50px;" ></td>
+                <td>Sentence Embedding (Sentence Embedding by BERT_pororo)</td>
+              </tr>
+              <tr>
+                <td id="sim_score_pororo_sts" style="font-size: 24px; height: 50px;"></td>
+                <td>Semantic Similarity (Semantic Textual Similarity by BERT_pororo)</td>
+              </tr>
+              <tr>
+                <td id="sim_score_edubert_sim" style="font-size: 24px; height: 50px;"></td>
+                <td>Sentence Equivalency (Sentence Equivalence by EduBERT)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row text-center" style="width: 100%; margin-top: 40px; display: inline-block;">
+          <button type="button" id="sendbutton" style="background-color: #4270e0; color: #fff; width: 120px; border: 1px solid #4270e0; height: 40px;"> 문제 생성 </button>
+        </div>
+
+       <hr>
+
+      </div> <!-- /container -->
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+server_configs:
+  setup:
+    engine_id_list:
+      - question-generation
+  misc:
+    model_class: T5ForConditionalGeneration
+    tokenizer_class: T5Tokenizer
+    model: ./model_checkpoint/QG_ket5_202110051356/saved_checkpoint_4
+    tokenizer: t5-base
+    device: cuda
+    #device: "cuda"

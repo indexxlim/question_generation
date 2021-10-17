@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href='/static/images/tbai-ci.ico'>
+    <title>투블럭 Ai Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=jddeCD4mBgoLBtLC5u4w9skamPrm5hh5IrBcABn509XxrBYxJKAH9bx895K78xBo" charset="UTF-8"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>  
+    <script>
+      var host_url = 'http://211.109.168.54:9999/';
+    </script>
+    <style>
+      .col-md-h {
+        flex: 0 0 12.666667%; max-width: 12.666667%;
+      }
+      .col-md-d {
+        flex: 0 0 87.333333%; max-width: 87.333333%;
+      }
+      th {
+        width: 12%;
+        color: #fff;
+        background-color: #69748a;
+        border: 1px solid #36445e;
+        height: 40px;
+      }
+      td {
+        background-color: #fff;
+        border: 1px solid #ddd;
+      }
+      button.disabled:hover {
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var sock = io.connect(host_url);
+        sock.on('message', function(msg){
+          console.log(msg);
+          $('#sendbutton').text('계산');
+          $('#sendbutton').attr("disabled", false);
+
+	  $('#sim_score_butter').text(msg.results[0]);
+       	  $('#sim_score_pororo_se').text(msg.results[1]);
+       	  $('#sim_score_pororo_sts').text(msg.results[2]);
+       	  $('#sim_score_edubert_sim').text(msg.results[3]);
+	  $('#result-table').show();
+          window.scrollTo(0,document.body.scrollHeight);
+        });
+  
+        $('#sendbutton').on('click', function(){
+          var text_1 = $('#myMessage_text_1').val().replace(/"/g,"'").substr(0, 5000)
+          var text_2 = $('#myMessage_text_2').val().replace(/"/g,"'").substr(0, 5000)
+	  sock.send(JSON.stringify({"type":"sim","text":[escape(text_1), escape(text_2)]}));
+          $('#sendbutton').text('계산 중...');
+          $('#sendbutton').attr("disabled", true);
+        });
+      });
+
+    </script>
+    <main role="main">
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <br> <br>
+      <div style="padding: 1rem 2rem 1rem;">
+        <div class="container">
+          <h1 class="display-3">
+            <a href="/">TwoBlock Ai Demo</a>
+	  </h1>
+        </div>
+      </div>
+
+      <div class="container">
+        <br>
+        <div class="row" style="font-size: 24px; font-weight: bold; margin-top: 30px; margin-bottom: 50px;">
+          문장 유사도 (Sentence Similarity)
+        </div>
+
+        <div class="row">
+          <div  class="col-md-h text-center" style="height: 50px; background-color: #36445e; border: #36445e solid 1px; color:#fff; padding-top: 10px;">
+            첫번째 문장 입력 
+          </div>
+        </div>
+        <div class="row">
+          <div style="width:100%; background-color: #fafafa; border: #ddd solid 1px; padding: 10px;">
+            <textarea id="myMessage_text_1" style="width: 100%;">두개의 문장 사이의 유사도를 측정합니다. </textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div  class="col-md-h text-center" style="height: 50px; background-color: #36445e; border: #36445e solid 1px; color:#fff; padding-top: 10px;">
+            두번째 문장 입력 
+          </div>
+        </div>
+        <div class="row">
+          <div style="width:100%; background-color: #fafafa; border: #ddd solid 1px; padding: 10px;">
+            <textarea id="myMessage_text_2" style="width: 100%;">두개의 문장이 주어지면, 두 문장의 의미적 유사도를 측정합니다.</textarea>
+          </div>
+        </div>
+        
+        <div id="result-table" class="row text-center" style="white-space: pre-wrap; background-color: #fafafa; margin-top: 50px; padding: 10px; display: none">
+          <table style="width: 60%;">
+            <tbody>
+              <tr>
+                <td id="sim_score_butter" style="font-size: 24px; height: 50px;"></td>
+                <td style="width: 80%;">Sent2Vec (Sentence Embedding by Sent2Vec) </td>
+              </tr>
+              <tr>
+                <td id="sim_score_pororo_se" style="font-size: 24px; height: 50px;" ></td>
+                <td>Sentence Embedding (Sentence Embedding by BERT_pororo)</td>
+              </tr>
+              <tr>
+                <td id="sim_score_pororo_sts" style="font-size: 24px; height: 50px;"></td>
+                <td>Semantic Similarity (Semantic Textual Similarity by BERT_pororo)</td>
+              </tr>
+              <tr>
+                <td id="sim_score_edubert_sim" style="font-size: 24px; height: 50px;"></td>
+                <td>Sentence Equivalency (Sentence Equivalence by EduBERT)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row text-center" style="width: 100%; margin-top: 40px; display: inline-block;">
+          <button type="button" id="sendbutton" style="background-color: #4270e0; color: #fff; width: 120px; border: 1px solid #4270e0; height: 40px;"> 인식 실행 </button>
+        </div>
+
+       <hr>
+
+      </div> <!-- /container -->
+
+    </main>
+
+    <footer class="container">
+	    <p>&copy;TwoBlock Ai. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
