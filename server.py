@@ -4,9 +4,8 @@ import importlib
 from fastapi import (FastAPI, Request)
 from fastapi.responses import JSONResponse
 
-from configloader import (server_config)
-from shared import ATMError
-
+from configloader import server_config
+server_config = server_config['server_configs']
 
 '''
     1. App Initializations
@@ -17,8 +16,12 @@ from shared import ATMError
 
 app = FastAPI()
 
-@app.exception_handler(ATMError)
-async def unicorn_exception_handler(request: Request, exc: ATMError):
+class UnicornException(Exception):
+    def __init__(self, name: str):
+        self.name = name
+
+@app.exception_handler(UnicornException)
+async def unicorn_exception_handler(request: Request, exc: UnicornException):
     return JSONResponse(
         status_code=400,
         content={"error": type(exc).__name__,
@@ -27,10 +30,9 @@ async def unicorn_exception_handler(request: Request, exc: ATMError):
 
 
 
-for engine_id in server_config['setup']['engine_id_list']:
-    try:
-        engine_module = importlib.import_module(f"engines.{engine_id.replace('-', '_')}")
-        app.include_router(engine_module.router) #, prefix=f"/")
-    except Exception as exc:
-        raise
-        
+try:
+    engine_module = importlib.import_module(f"inference")
+    app.include_router(engine_module.router) #, prefix=f"/")
+except Exception as exc:
+    raise
+    

@@ -14,7 +14,7 @@ from configloader import server_config
 
 
 class responseJSON(BaseModel):
-    candidates: List[str]
+    question: str
 
         
 class requestJSON(BaseModel):
@@ -25,7 +25,7 @@ class requestJSON(BaseModel):
 
 
 router = APIRouter()
-
+server_config = server_config['server_configs']
 device=server_config.misc.device
 model_class = getattr(transformers, server_config.misc.model_class)
 model = model_class.from_pretrained(server_config.misc.model)
@@ -36,6 +36,7 @@ tokenizer_class = getattr(transformers, server_config.misc.tokenizer_class)
 tokenizer = tokenizer_class.from_pretrained(server_config.misc.tokenizer)
 source_span_len = 1000
 
+@torch.no_grad()
 def inference(model, tokenizer, input_data, configs):
     context     = input_data['context']
     answer      = input_data['answer']
@@ -63,8 +64,9 @@ def inference(model, tokenizer, input_data, configs):
         source = before_answer + '<extra_id_0>' + context[start_position:end_position] + '<extra_id_0>' + after_answer
     else:
         source = context[:start_position] + '<extra_id_0>' + context[start_position:end_position] + '<extra_id_0>' + context[end_position:]
+    source = f"answer: question generation context: {source}"
 
-    source_batch = tokenizer.batch_encode_plus(source,
+    source_batch = tokenizer.encode_plus(source,
                                     padding='max_length',
                                     max_length=tokenizer.model_max_length,
                                     truncation=True,
@@ -86,10 +88,8 @@ def inference(model, tokenizer, input_data, configs):
             early_stopping=True
         )
 
-    decoded_preds = [tokenizer.decode(c, 
-                    skip_special_tokens=True, 
-                    clean_up_tokenization_spaces=False) 
-                    for c in pred_ids]
+    decoded_preds = tokenizer.decode(pred_ids[0],skip_special_tokens=True)
+    return {'question':decoded_preds}
 
 
 @router.post("/generate", response_model=responseJSON)
@@ -104,4 +104,11 @@ def generate(input_data: requestJSON):
         return results
     except Exception as exc:  #add type of Exception 
         raise(exc)
-    
+
+@router.get("/")
+def api_info():
+    return {
+        "server_configs": server_config,
+        "request_json": requestJSON.schema(),
+        "response_json": responseJSON.schema()
+    }    

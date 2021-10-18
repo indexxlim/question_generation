@@ -5,7 +5,9 @@ import itertools
 import collections
 import pkg_resources  # pip install py-rouge
 from io import open
-from konlpy.tag import Mecab
+#from konlpy.tag import Mecab
+import mecab
+tagger = mecab.MeCab()
 
 
 class Rouge:
@@ -59,7 +61,7 @@ class Rouge:
 
         self.use_tokenizer = use_tokenizer
         if use_tokenizer:
-            self.tokenizer = Mecab()
+            self.tokenizer = mecab.MeCab()
 
 
         self.apply_avg = apply_avg
